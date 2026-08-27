@@ -12,7 +12,6 @@ window.ROADMAP = [
   { numero: 2, titulo: "De la producción a la vitrina" },
   { numero: 3, titulo: "Producir para mañana" },
   { numero: 4, titulo: "La congelación como herramienta" },
-  { numero: 5, titulo: "Frío positivo" },
   { numero: 6, titulo: "La producción durante la noche" },
   { numero: 7, titulo: "Programar la producción" },
   { numero: 8, titulo: "Control de stock" },
@@ -22,4 +21,4 @@ window.ROADMAP = [
   { numero: 13, titulo: "La masa manda" },
   { numero: 15, titulo: "Producción vs. demanda" },
   { numero: 16, titulo: "El método en una página" }
-];
+  ];
