@@ -12,11 +12,30 @@ backend, sin build, para publicar directo en GitHub Pages.
   positivo, que se vuelve naranja en el horno — la metáfora del método
   hecha color).
 - `app.js` — el motor. No contiene ni un solo dato de panadería. Solo sabe
-  leer `window.CAPITULOS` y `window.ROADMAP` y dibujar 4 vistas: inicio,
-  módulo, ficha (receta) y problema (síntoma), con rutas tipo
-  `#modulo/11`, `#ficha/11/pan-canilla` y `#problema/14/se-abrio`.
-- `contenido-capitulo-11.js` — el Capítulo 11 completo (las 8 fichas
-  técnicas), tal como está en el libro.
+  leer `window.CAPITULOS`, `window.ROADMAP` y `window.HERRAMIENTAS`, y
+  dibujar 6 vistas: inicio, módulo, ficha (receta), problema (síntoma),
+  artículo (capítulo de puro texto) y herramienta (calculadora interactiva),
+  con rutas tipo `#modulo/11`, `#ficha/11/pan-canilla`,
+  `#problema/14/se-abrio`, `#articulo/5` y `#herramienta/calculadora-costos`.
+  Las herramientas son distintas al resto: traen su propia lógica de
+  cálculo y su propio `render()`, no son solo datos — el motor solo sabe
+  que existen y las monta.
+- `contenido-capitulo-5.js` — el Capítulo 5 (Frío positivo), primer
+  capítulo de tipo "artículo": subtítulos + párrafos, con un índice
+  automático y referencias cruzadas a otros capítulos (se muestran como
+  link si ya existen, o "próximamente" si no). La parada "Frío /
+  Fermentación" de la Línea de horneado en cada ficha del Capítulo 11 ya
+  enlaza directo a este capítulo.
+- `contenido-capitulo-11.js` — el Capítulo 11 completo (las 4 fichas técnicas,
+  una por familia de masa), tal como está en el libro.
+- `herramienta-calculadora-costos.js` — Bono 4 hecho herramienta real:
+  carga de ingredientes con su costo prorrateado, rendimiento del lote y
+  precio de venta → costo por unidad, margen bruto y margen %. Cálculo en
+  vivo, sin recargar nada.
+- `herramienta-calculadora-recetas.js` — escalado de fórmulas (Capítulo 9):
+  carga la fórmula base en gramos, marca qué ingredientes son harina, define
+  rendimiento base y deseado → tabla escalada con porcentaje panadero
+  (harina = 100%) para verificar la fórmula.
 - `contenido-capitulo-14.js` — el Capítulo 14 (Errores de producción),
   indexado por síntoma en vez de por índice — el buscador del inicio
   encuentra un problema aunque no se use la palabra exacta de la tabla
@@ -48,7 +67,8 @@ No hay que tocar `app.js` para nada de esto.
 
 ## Qué falta (siguiente iteración)
 
-- Vista "artículo" para capítulos de puro texto (4, 5, 6, 13, 15, etc.).
+- Migrar el resto de los capítulos de puro texto (4, 6, 7, 8, 9, 12, 13, 15,
+  16) con el mismo patrón que el Capítulo 5 — ya probado y funcionando.
 - Calculadora de costo embebida (conectar con la lógica de PankseroPoS).
 - Campo "Dificultad" en cada ficha del Capítulo 11 — hoy aparece como
   pendiente porque es una calificación subjetiva que falta confirmar.
