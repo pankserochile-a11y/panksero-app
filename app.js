@@ -27,6 +27,10 @@
     return window.ROADMAP || [];
   }
 
+  function getHerramientas() {
+    return window.HERRAMIENTAS || {};
+  }
+
   function showBack(visible) {
     backBtn.hidden = !visible;
   }
@@ -47,10 +51,11 @@
 
     var cardsHtml = ids.map(function (id) {
       var c = capitulos[id];
+      var ruta = c.tipo === "articulo" ? "articulo/" + esc(id) : "modulo/" + esc(id);
       var count = ((c.recetas && c.recetas.length) || (c.problemas && c.problemas.length) || 0);
       var etiqueta = c.recetas ? " fichas disponibles" : " problemas indexados";
       return (
-        '<button class="module-card" data-route="modulo/' + esc(id) + '">' +
+        '<button class="module-card" data-route="' + ruta + '">' +
           '<span class="module-num">Capítulo ' + esc(c.numero) + '</span>' +
           '<span class="module-title">' + esc(c.titulo) + "</span>" +
           '<span class="module-sub">' + esc(c.subtitulo || "") + "</span>" +
@@ -69,6 +74,18 @@
       );
     }).join("");
 
+    var herramientas = getHerramientas();
+    var herramientasHtml = Object.keys(herramientas).map(function (hid) {
+      var h = herramientas[hid];
+      return (
+        '<button class="module-card" data-route="herramienta/' + esc(hid) + '">' +
+          '<span class="module-num">' + esc(h.eyebrow || "Herramienta") + '</span>' +
+          '<span class="module-title">' + esc(h.titulo) + "</span>" +
+          '<span class="module-sub">' + esc(h.subtitulo || "") + "</span>" +
+        "</button>"
+      );
+    }).join("") || '<p class="empty-state">Todavía no hay herramientas cargadas.</p>';
+
     appEl.innerHTML =
       '<section class="hero">' +
         '<span class="eyebrow">Sistema de producción</span>' +
@@ -81,6 +98,8 @@
       '<div id="resultadosBuscador"></div>' +
       '<p class="section-label">Capítulos disponibles</p>' +
       '<div class="shelf">' + (cardsHtml || '<p class="empty-state">Todavía no hay capítulos cargados.</p>') + "</div>" +
+      '<p class="section-label">Herramientas</p>' +
+      '<div class="shelf">' + herramientasHtml + "</div>" +
       '<p class="section-label">En construcción</p>' +
       '<div class="shelf">' + lockedHtml + "</div>" +
       '<footer class="credito">Método Panksero — libro digital interno</footer>';
@@ -216,11 +235,14 @@
     );
   }
 
-  function ribbonStop(label, value, color) {
+  function ribbonStop(label, value, color, route) {
+    var lbl = route
+      ? '<button class="lbl lbl-link" data-route="' + esc(route) + '">' + esc(label) + " ↗</button>"
+      : '<div class="lbl">' + esc(label) + "</div>";
     return (
       '<div class="stop" style="--stop-color:' + color + '">' +
         '<span class="dot"></span>' +
-        '<div class="lbl">' + esc(label) + "</div>" +
+        lbl +
         '<div class="val">' + esc(value || "—") + "</div>" +
       "</div>"
     );
@@ -278,8 +300,8 @@
       '<div class="linea-horneado">' +
         "<h2>Línea de horneado</h2>" +
         '<div class="ribbon">' +
-          ribbonStop("Congelación", t.congelacion, "var(--hielo)") +
-          ribbonStop("Frío / Fermentación", t.frioPositivo, "var(--hielo)") +
+          ribbonStop("Congelación", t.congelacion, "var(--escarcha)") +
+          ribbonStop("Frío / Fermentación", t.frioPositivo, "var(--escarcha)", getCapitulos()[5] ? "articulo/5" : null) +
           ribbonStop("Horneado", t.horneado, "var(--brasa)") +
         "</div>" +
       "</div>" +
@@ -322,6 +344,72 @@
     showBack(true);
   }
 
+  function refLink(numeroCapitulo) {
+    var existe = !!getCapitulos()[numeroCapitulo];
+    if (existe) {
+      var destino = getCapitulos()[numeroCapitulo];
+      var ruta = destino.tipo === "articulo" ? "articulo/" + numeroCapitulo : "modulo/" + numeroCapitulo;
+      return '<button class="ref-link" data-route="' + esc(ruta) + '">Ver Capítulo ' + esc(numeroCapitulo) + ": " + esc(destino.titulo) + "</button>";
+    }
+    return '<span class="ref-link ref-pendiente">Capítulo ' + esc(numeroCapitulo) + " — próximamente</span>";
+  }
+
+  function renderArticulo(id) {
+    var c = getCapitulos()[id];
+    if (!c) { renderNoEncontrado(); return; }
+
+    var indice = (c.secciones || []).map(function (s, i) {
+      return '<li><a href="#sec-' + i + '" class="toc-link">' + esc(s.titulo) + "</a></li>";
+    }).join("");
+
+    var cuerpo = (c.secciones || []).map(function (s, i) {
+      var parrafos = (s.parrafos || []).map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("");
+      var refs = (s.referencias || []).map(refLink).join("");
+      return (
+        '<section id="sec-' + i + '">' +
+          "<h2>" + esc(s.titulo) + "</h2>" +
+          parrafos +
+          (refs ? '<div class="refs">' + refs + "</div>" : "") +
+        "</section>"
+      );
+    }).join("");
+
+    appEl.innerHTML =
+      '<div class="ficha-header">' +
+        '<span class="eyebrow">Capítulo ' + esc(c.numero) + '</span>' +
+        "<h1>" + esc(c.titulo) + "</h1>" +
+        (c.intro ? '<p class="identidad">' + esc(c.intro) + "</p>" : "") +
+      "</div>" +
+      (indice ? '<nav class="toc"><ul>' + indice + "</ul></nav>" : "") +
+      '<div class="ficha-body articulo-body">' + cuerpo + "</div>";
+
+    attachRoutes(appEl);
+    document.querySelectorAll(".toc-link").forEach(function (a) {
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        var target = document.querySelector(a.getAttribute("href"));
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+    showBack(true);
+  }
+
+  function renderHerramienta(id) {
+    var h = getHerramientas()[id];
+    if (!h || typeof h.render !== "function") { renderNoEncontrado(); return; }
+
+    appEl.innerHTML =
+      '<div class="ficha-header">' +
+        '<span class="eyebrow">' + esc(h.eyebrow || "Herramienta") + '</span>' +
+        "<h1>" + esc(h.titulo) + "</h1>" +
+        (h.subtitulo ? '<p class="identidad">' + esc(h.subtitulo) + "</p>" : "") +
+      "</div>" +
+      '<div id="herramienta-container"></div>';
+
+    showBack(true);
+    h.render(document.getElementById("herramienta-container"));
+  }
+
   function renderNoEncontrado() {
     appEl.innerHTML = '<p class="empty-state">No encontramos esa página. <button data-route="" class="back-btn" style="display:inline">Volver al inicio</button></p>';
     attachRoutes(appEl);
@@ -337,6 +425,8 @@
     if (parts[0] === "modulo" && parts[1]) { renderModulo(parts[1]); return; }
     if (parts[0] === "ficha" && parts[1] && parts[2]) { renderFicha(parts[1], parts[2]); return; }
     if (parts[0] === "problema" && parts[1] && parts[2]) { renderProblema(parts[1], parts[2]); return; }
+    if (parts[0] === "articulo" && parts[1]) { renderArticulo(parts[1]); return; }
+    if (parts[0] === "herramienta" && parts[1]) { renderHerramienta(parts[1]); return; }
     renderInicio();
     showBack(false);
   }
