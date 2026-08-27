@@ -326,6 +326,61 @@ main#app {
   text-transform: uppercase;
   color: var(--grafito);
 }
+.stop .lbl-link {
+  background: none;
+  border: none;
+  width: 100%;
+  color: var(--escarcha);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0;
+}
+.stop .lbl-link:hover { color: var(--vaho); }
+
+/* Artículo (capítulos de puro texto) */
+nav.toc {
+  margin: 1.6rem 0 2rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--acero-borde);
+  background: var(--acero);
+}
+nav.toc ul { list-style: none; margin: 0; padding: 0; columns: 2; gap: 1.2rem; }
+nav.toc li { break-inside: avoid; margin-bottom: 0.5rem; }
+nav.toc a.toc-link {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  color: var(--escarcha);
+  text-decoration: none;
+}
+nav.toc a.toc-link:hover { text-decoration: underline; }
+
+.articulo-body section { margin-bottom: 2.2rem; scroll-margin-top: 5rem; }
+.articulo-body section h2 {
+  font-family: "Big Shoulders Text", "IBM Plex Sans", sans-serif;
+  font-size: 1.2rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--vaho);
+  margin: 0 0 0.6rem;
+}
+.articulo-body p { margin-bottom: 0.8rem; }
+
+.refs { margin-top: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.ref-link {
+  display: inline-block;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.76rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--escarcha);
+  color: var(--escarcha);
+  background: var(--escarcha-tenue);
+}
+button.ref-link:hover { background: var(--escarcha); color: var(--noche); }
+.ref-pendiente {
+  border-color: var(--acero-borde);
+  color: var(--grafito);
+  background: none;
+}
 .stop .val { text-align: center; font-size: 0.85rem; margin-top: 0.25rem; padding: 0 0.4rem; color: var(--vaho); }
 
 table.formula { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.9rem; }
@@ -389,4 +444,123 @@ footer.credito {
 @media (max-width: 560px) {
   .hero { padding-top: 2.2rem; }
   .datos-rapidos { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- Herramientas (calculadoras) ---------- */
+
+.calc-tool { padding-top: 0.5rem; }
+
+.calc-intro { color: var(--grafito); max-width: 60ch; margin-bottom: 1.6rem; }
+
+.calc-section-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brasa);
+  margin: 1.8rem 0 0.8rem;
+}
+
+.calc-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.calc-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+.calc-row-receta { grid-template-columns: 1.2fr 0.8fr auto auto; }
+
+.calc-input {
+  border: 1px solid var(--acero-borde);
+  background: var(--acero);
+  color: var(--vaho);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 0.92rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius);
+}
+.calc-input:focus { border-color: var(--brasa); outline: none; }
+.calc-input-num { font-family: "IBM Plex Mono", monospace; }
+
+.calc-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  color: var(--grafito);
+  white-space: nowrap;
+}
+
+.calc-remove {
+  background: none;
+  border: 1px solid var(--acero-borde);
+  color: var(--grafito);
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+.calc-remove:hover { border-color: var(--brasa); color: var(--brasa); }
+
+.calc-add {
+  margin-top: 0.8rem;
+  background: none;
+  border: 1px dashed var(--acero-borde);
+  color: var(--escarcha);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.85rem;
+  padding: 0.6rem 1rem;
+  width: 100%;
+  border-radius: var(--radius);
+}
+.calc-add:hover { border-color: var(--escarcha); }
+
+.calc-params { display: flex; flex-direction: column; gap: 1rem; }
+.calc-params label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--grafito);
+}
+
+.calc-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px;
+  background: var(--linea);
+  border: 1px solid var(--linea);
+}
+.calc-result {
+  background: var(--acero);
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.calc-result .k {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--grafito);
+}
+.calc-result .v { font-size: 1.15rem; font-weight: 600; }
+.calc-result-highlight { background: var(--brasa-tenue); }
+.calc-result-highlight .v { color: var(--brasa); }
+
+.calc-formula-table { margin-top: 0.6rem; }
+.calc-nota-verificacion {
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  color: var(--grafito);
+}
+
+@media (max-width: 560px) {
+  .calc-row { grid-template-columns: 1fr auto; }
+  .calc-row .calc-input-nombre { grid-column: 1 / -1; }
+  .calc-row-receta { grid-template-columns: 1fr auto; }
+  .calc-row-receta .calc-input-nombre { grid-column: 1 / -1; }
 }
