@@ -18,7 +18,7 @@ backend, sin build, para publicar directo en GitHub Pages.
 - `contenido-capitulo-11.js` — el Capítulo 11 completo (las 8 fichas
   técnicas), tal como está en el libro.
 - `contenido-capitulo-14.js` — el Capítulo 14 (Errores de producción),
-  indexado por síntoma en ver de por índice — el buscador del inicio
+  indexado por síntoma en vez de por índice — el buscador del inicio
   encuentra un problema aunque no se use la palabra exacta de la tabla
   (usa una lista de `keywords` por problema).
 - `contenido-roadmap.js` — lista de los capítulos que faltan por migrar,
