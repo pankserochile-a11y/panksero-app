@@ -54,9 +54,10 @@
       var ruta = c.tipo === "articulo" ? "articulo/" + esc(id) : "modulo/" + esc(id);
       var count = ((c.recetas && c.recetas.length) || (c.problemas && c.problemas.length) || 0);
       var etiqueta = c.recetas ? " fichas disponibles" : " problemas indexados";
+      var rotulo = c.eyebrow || ("Capítulo " + c.numero);
       return (
         '<button class="module-card" data-route="' + ruta + '">' +
-          '<span class="module-num">Capítulo ' + esc(c.numero) + '</span>' +
+          '<span class="module-num">' + esc(rotulo) + '</span>' +
           '<span class="module-title">' + esc(c.titulo) + "</span>" +
           '<span class="module-sub">' + esc(c.subtitulo || "") + "</span>" +
           (count ? '<span class="module-sub">' + count + etiqueta + "</span>" : "") +
@@ -376,7 +377,7 @@
 
     appEl.innerHTML =
       '<div class="ficha-header">' +
-        '<span class="eyebrow">Capítulo ' + esc(c.numero) + '</span>' +
+        '<span class="eyebrow">' + esc(c.eyebrow || ("Capítulo " + c.numero)) + '</span>' +
         "<h1>" + esc(c.titulo) + "</h1>" +
         (c.intro ? '<p class="identidad">' + esc(c.intro) + "</p>" : "") +
       "</div>" +
