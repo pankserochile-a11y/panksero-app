@@ -4,6 +4,14 @@ Primer esqueleto funcional de la app del libro. Mismo patrón que "El Secreto
 del Pan Gocho": motor genérico + un archivo de datos por capítulo, sin
 backend, sin build, para publicar directo en GitHub Pages.
 
+## Estado
+
+El libro completo está migrado: Prólogo + 17 capítulos + Bonos, todo dentro de
+la app. El roadmap (`contenido-roadmap.js`) quedó vacío — no hay nada más
+pendiente de migrar del libro actual. Si se agrega un capítulo nuevo al
+libro más adelante, ahí es donde vuelve a aparecer como "próximamente"
+hasta que se migre.
+
 ## Archivos
 
 - `index.html` — carga fuentes, estilos y scripts en orden.

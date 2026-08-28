@@ -89,6 +89,7 @@
 
     appEl.innerHTML =
       '<section class="hero">' +
+        '<img src="logo-panksero.webp" class="hero-logo" alt="Panksero — Sabor de casa">' +
         '<span class="eyebrow">Sistema de producción</span>' +
         "<h1>Método <em>Panksero</em></h1>" +
         '<p class="lead">Cómo producir hoy lo que vas a vender mañana.</p>' +
@@ -367,6 +368,15 @@
     return '<span class="ref-link ref-pendiente">Capítulo ' + esc(numeroCapitulo) + " — próximamente</span>";
   }
 
+  function renderTabla(t) {
+    if (!t || !t.filas) return "";
+    var thead = t.headers ? "<thead><tr>" + t.headers.map(function (h) { return "<th>" + esc(h) + "</th>"; }).join("") + "</tr></thead>" : "";
+    var tbody = "<tbody>" + t.filas.map(function (fila) {
+      return "<tr>" + fila.map(function (c) { return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>";
+    }).join("") + "</tbody>";
+    return '<table class="formula articulo-tabla">' + thead + tbody + "</table>";
+  }
+
   function renderArticulo(id) {
     var c = getCapitulos()[id];
     if (!c) { renderNoEncontrado(); return; }
@@ -377,11 +387,13 @@
 
     var cuerpo = (c.secciones || []).map(function (s, i) {
       var parrafos = (s.parrafos || []).map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("");
+      var lista = s.lista ? "<ul>" + s.lista.map(function (li) { return "<li>" + esc(li) + "</li>"; }).join("") + "</ul>" : "";
+      var tabla = renderTabla(s.tabla);
       var refs = (s.referencias || []).map(refLink).join("");
       return (
         '<section id="sec-' + i + '">' +
           "<h2>" + esc(s.titulo) + "</h2>" +
-          parrafos +
+          parrafos + lista + tabla +
           (refs ? '<div class="refs">' + refs + "</div>" : "") +
         "</section>"
       );
