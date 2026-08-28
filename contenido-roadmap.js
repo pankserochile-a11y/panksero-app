@@ -20,5 +20,6 @@ window.ROADMAP = [
   { numero: 12, titulo: "Casos reales de producción" },
   { numero: 13, titulo: "La masa manda" },
   { numero: 15, titulo: "Producción vs. demanda" },
-  { numero: 16, titulo: "El método en una página" }
-  ];
+  { numero: 16, titulo: "El método en una página" },
+  { numero: 17, titulo: "Implementa Panksero en 7 días" }
+];
