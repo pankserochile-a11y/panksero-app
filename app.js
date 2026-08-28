@@ -274,6 +274,18 @@
     );
   }
 
+  function renderProceso(pasos) {
+    if (!pasos || !pasos.length) return "";
+    return (
+      "<h2>Proceso</h2>" +
+      '<ol class="proceso-list">' +
+      pasos.map(function (p) {
+        return "<li><strong>" + esc(p.titulo) + "</strong> — " + esc(p.detalle) + "</li>";
+      }).join("") +
+      "</ol>"
+    );
+  }
+
   function renderFicha(capituloId, recetaId) {
     var c = getCapitulos()[capituloId];
     var r = c && (c.recetas || []).find(function (x) { return x.id === recetaId; });
@@ -309,11 +321,11 @@
 
       '<div class="ficha-body">' +
         renderFormula(r.formula) +
-        (r.produccion ? "<h2>Producción</h2><p>" + esc(r.produccion) + "</p>" : "") +
-        (r.congelacion ? "<h2>Congelación</h2><p>" + esc(r.congelacion) + "</p>" : "") +
-        (r.frioPositivo ? "<h2>Frío positivo</h2><p>" + esc(r.frioPositivo) + "</p>" : "") +
-        (r.fermentacion ? "<h2>Fermentación</h2><p>" + esc(r.fermentacion) + "</p>" : "") +
-        (r.horneado ? "<h2>Horneado</h2><p>" + esc(r.horneado) + "</p>" : "") +
+        (r.proceso ? renderProceso(r.proceso) : (r.produccion ? "<h2>Producción</h2><p>" + esc(r.produccion) + "</p>" : "")) +
+        (!r.proceso && r.congelacion ? "<h2>Congelación</h2><p>" + esc(r.congelacion) + "</p>" : "") +
+        (!r.proceso && r.frioPositivo ? "<h2>Frío positivo</h2><p>" + esc(r.frioPositivo) + "</p>" : "") +
+        (!r.proceso && r.fermentacion ? "<h2>Fermentación</h2><p>" + esc(r.fermentacion) + "</p>" : "") +
+        (!r.proceso && r.horneado ? "<h2>Horneado</h2><p>" + esc(r.horneado) + "</p>" : "") +
         (r.vidaUtil ? "<h2>Vida útil (congelado)</h2><p>" + esc(r.vidaUtil) + "</p>" : "") +
         (r.presentacion ? "<h2>Presentación de venta</h2><p>" + esc(r.presentacion) + "</p>" : "") +
         (r.notaExtra ? '<div class="nota">' + esc(r.notaExtra) + "</div>" : "") +

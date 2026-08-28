@@ -564,3 +564,39 @@ footer.credito {
   .calc-row-receta { grid-template-columns: 1fr auto; }
   .calc-row-receta .calc-input-nombre { grid-column: 1 / -1; }
 }
+
+.calc-row-costeo {
+  grid-template-columns: 1.3fr 0.8fr 0.8fr 0.9fr auto;
+}
+.calc-row-header {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--grafito);
+  padding: 0 0.1rem 0.3rem;
+}
+.calc-costo-auto {
+  font-size: 0.92rem;
+  color: var(--escarcha);
+  text-align: right;
+  padding-right: 0.4rem;
+}
+.calc-params-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+
+@media (max-width: 620px) {
+  .calc-row-costeo { grid-template-columns: 1fr auto; }
+  .calc-row-costeo .calc-input-nombre { grid-column: 1 / -1; }
+  .calc-row-header { display: none; }
+}
+
+.proceso-list {
+  margin: 0.6rem 0 0;
+  padding-left: 1.4rem;
+  counter-reset: proceso;
+}
+.proceso-list li {
+  margin-bottom: 0.9rem;
+  padding-left: 0.3rem;
+}
+.proceso-list li strong { color: var(--brasa); }

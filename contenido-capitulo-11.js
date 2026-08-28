@@ -33,6 +33,13 @@ window.CAPITULOS[11] = {
         { ingrediente: "Levadura seca", peso: "35 g" },
         { ingrediente: "Mejorador Vulkan", peso: "80 g" }
       ],
+      proceso: [
+        { titulo: "Amasado", detalle: "Mezclar harina, agua, sal, azúcar, levadura y mejorador (con hielo, masa fría). Tiempo exacto de amasado: dato pendiente de validación Panksero." },
+        { titulo: "División y formado", detalle: "Sobado → picado → porcionado (~100 g por unidad) → formado." },
+        { titulo: "Congelación", detalle: "Directo a bandejas, sin fermentación previa. 12–14 horas." },
+        { titulo: "Frío positivo", detalle: "Traslado al cuarto frío una hora antes del cierre (≈20:00). 16 °C en verano / 22 °C en invierno. Toda la noche; la fermentación se desarrolla ahí, sin fermentadora aparte." },
+        { titulo: "Horneado", detalle: "Al abrir (7:00–8:00) queda 1–2 horas de margen. ~180 °C, gas 25 min de referencia — ajustar según color y textura." }
+      ],
       produccion: "Masa con hielo y agua → sobado → picado → porcionado → formado → directo a bandejas para congelación.",
       congelacion: "12–14 horas.",
       frioPositivo: "Cuarto frío, 16 °C en verano / 22 °C en invierno; traslado una hora antes del cierre (≈20:00), toda la noche.",
@@ -61,6 +68,13 @@ window.CAPITULOS[11] = {
         { ingrediente: "Manteca panadera", peso: "324 g" },
         { ingrediente: "Esencia de vainilla", peso: "30 g" }
       ],
+      proceso: [
+        { titulo: "Amasado", detalle: "Mezclar harina, agua, huevo, azúcar, edulcorante, sal, levadura, manteca y esencia de vainilla (con hielo, masa fría). Tiempo exacto de amasado: dato pendiente de validación Panksero." },
+        { titulo: "División y formado", detalle: "Sobado → picado → porcionado (~425 g por pieza) → formado." },
+        { titulo: "Congelación", detalle: "Directo a bandejas, sin fermentación previa. 12–14 horas." },
+        { titulo: "Frío positivo", detalle: "Traslado al cuarto frío una hora antes del cierre (≈20:00). 16 °C en verano / 22 °C en invierno. Toda la noche; la fermentación se desarrolla ahí, sin fermentadora aparte." },
+        { titulo: "Horneado", detalle: "Al abrir (7:00–8:00) queda 1–2 horas de margen. ~180 °C, gas 20 min de referencia — ajustar según color y textura." }
+      ],
       produccion: "Masa con hielo y agua → sobado → picado → porcionado → formado → directo a bandejas para congelación.",
       congelacion: "12–14 horas.",
       frioPositivo: "Cuarto frío, 16 °C en verano / 22 °C en invierno; traslado una hora antes del cierre (≈20:00), toda la noche.",
@@ -85,6 +99,17 @@ window.CAPITULOS[11] = {
         { ingrediente: "Manteca panadera", peso: "125 g" },
         { ingrediente: "Maestra Horneo (empaste)", peso: "800 g" },
         { ingrediente: "Queso Palmita (relleno)", peso: "1.200 g (50 g/pieza)" }
+      ],
+      proceso: [
+        { titulo: "Amasado", detalle: "Mezclar harina, agua, sal y manteca panadera. Tiempo exacto de amasado: dato pendiente de validación Panksero." },
+        { titulo: "Primer reposo y estirado", detalle: "Dato pendiente de validación Panksero (tiempo de reposo y dimensiones del primer estirado)." },
+        { titulo: "Empaste", detalle: "Se incorpora la Maestra Horneo (800 g) sobre la masa ya estirada." },
+        { titulo: "Laminado", detalle: "Vueltas de laminado para desarrollar el hojaldre. Número de vueltas y tiempos de reposo entre cada una: dato pendiente de validación Panksero — Palmeras usa 4 vueltas con reposos de 15 min congelador + 15–40 min refrigerador, pero no está confirmado si Empanada Queso sigue exactamente esa misma secuencia." },
+        { titulo: "Formado y relleno", detalle: "Se corta y rellena con Queso Palmita (50 g/pieza). Dimensiones exactas de corte: dato pendiente de validación Panksero." },
+        { titulo: "Congelación", detalle: "Después del formado; duración general del obrador: 12–14 horas." },
+        { titulo: "Frío positivo", detalle: "Nevera, 7–8 °C, toda la noche." },
+        { titulo: "Fermentación", detalle: "1 hora en fermentadora a 27 °C y 80% de humedad, a la mañana siguiente. Lista alrededor de las 11:00." },
+        { titulo: "Horneado", detalle: "~180 °C, gas 40 min de referencia — ajustar según color y textura." }
       ],
       produccion: "Sigue el proceso de la familia de masa hojaldrada (ver Croissant / Media Luna).",
       congelacion: "Después del formado; duración general del obrador: 12–14 horas.",
@@ -114,6 +139,17 @@ window.CAPITULOS[11] = {
         { ingrediente: "Leche entera", peso: "287 g", nota: "pastón" },
         { ingrediente: "Margarina Maestra Horneo", peso: "310 g", nota: "pastón" },
         { ingrediente: "Margarina Maestra Horneo", peso: "1.137 g", nota: "empaste" }
+      ],
+      proceso: [
+        { titulo: "Amasado (pastón)", detalle: "Mezclar las harinas, sal, agua, levadura, azúcar, huevo, leche y margarina. Tiempo exacto de amasado: dato pendiente de validación Panksero." },
+        { titulo: "Primer reposo y estirado", detalle: "Dato pendiente de validación Panksero (tiempo de reposo y dimensiones del primer estirado)." },
+        { titulo: "Empaste", detalle: "Se incorpora la margarina Maestra Horneo (1.137 g) sobre el pastón ya estirado." },
+        { titulo: "Laminado", detalle: "Vueltas de laminado para desarrollar el hojaldre. Número de vueltas y tiempos de reposo entre cada una: dato pendiente de validación Panksero — Palmeras usa 4 vueltas con reposos de 15 min congelador + 15–40 min refrigerador, pero no está confirmado si Croissant/Media Luna sigue exactamente esa misma secuencia." },
+        { titulo: "Formado", detalle: "Corte y enrollado hasta pieza de ~85 g. Dimensiones exactas de corte: dato pendiente de validación Panksero." },
+        { titulo: "Congelación", detalle: "Después del formado; duración exacta para laminados pendiente de confirmar (general del obrador: 12–14 horas)." },
+        { titulo: "Frío positivo", detalle: "Nevera, 7–8 °C, toda la noche." },
+        { titulo: "Fermentación", detalle: "1 hora en fermentadora a 27 °C y 80% de humedad, a la mañana siguiente. Lista alrededor de las 11:00." },
+        { titulo: "Horneado", detalle: "~180 °C — ajustar según color y textura." }
       ],
       produccion: "Formado con vueltas de laminado → congelación → frío positivo → fermentadora.",
       congelacion: "Después del formado; duración exacta para laminados pendiente de confirmar (general del obrador: 12–14 horas).",
