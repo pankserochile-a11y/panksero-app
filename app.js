@@ -55,8 +55,10 @@
       var count = ((c.recetas && c.recetas.length) || (c.problemas && c.problemas.length) || 0);
       var etiqueta = c.recetas ? " fichas disponibles" : " problemas indexados";
       var rotulo = c.eyebrow || ("Capítulo " + c.numero);
+      var esPago = !esGratis(c.nivel);
       return (
         '<button class="module-card" data-route="' + ruta + '">' +
+          (esPago ? '<span class="lock-tag lock-tag-pago">🔒 Pago</span>' : "") +
           '<span class="module-num">' + esc(rotulo) + '</span>' +
           '<span class="module-title">' + esc(c.titulo) + "</span>" +
           '<span class="module-sub">' + esc(c.subtitulo || "") + "</span>" +
@@ -80,6 +82,7 @@
       var h = herramientas[hid];
       return (
         '<button class="module-card" data-route="herramienta/' + esc(hid) + '">' +
+          '<span class="lock-tag lock-tag-pago">🔒 Pago</span>' +
           '<span class="module-num">' + esc(h.eyebrow || "Herramienta") + '</span>' +
           '<span class="module-title">' + esc(h.titulo) + "</span>" +
           '<span class="module-sub">' + esc(h.subtitulo || "") + "</span>" +
@@ -96,6 +99,7 @@
         '<div class="search-row">' +
           '<input type="search" id="buscador" placeholder="Buscar un pan, o describe qué pasó (ej. &quot;no creció&quot;)" aria-label="Buscar receta o problema">' +
         "</div>" +
+        '<button class="oferta-cta" data-route="oferta">Ver planes y precios →</button>' +
       "</section>" +
       '<div id="resultadosBuscador"></div>' +
       '<p class="section-label">Capítulos disponibles</p>' +
@@ -435,10 +439,115 @@
     h.render(document.getElementById("herramienta-container"));
   }
 
+  function fmtCLP(n) {
+    return "$" + n.toLocaleString("es-CL");
+  }
+
+  function renderOferta() {
+    var cfg = window.PRECIOS;
+    if (!cfg) { renderNoEncontrado(); return; }
+
+    var cardsHtml = cfg.niveles.map(function (nivel) {
+      var itemsHtml = nivel.incluye.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("");
+      return (
+        '<div class="oferta-card' + (nivel.destacado ? " oferta-card-destacada" : "") + '">' +
+          (nivel.destacado ? '<span class="oferta-badge">Más elegido</span>' : "") +
+          '<h3 class="oferta-nombre">' + esc(nivel.nombre) + "</h3>" +
+          '<div class="oferta-precio"><span class="oferta-tipo">' + esc(nivel.tipo) + '</span><span class="oferta-monto mono">' + fmtCLP(nivel.precio) + " " + esc(cfg.moneda) + "</span></div>" +
+          '<ul class="oferta-incluye">' + itemsHtml + "</ul>" +
+        "</div>"
+      );
+    }).join("");
+
+    appEl.innerHTML =
+      '<div class="ficha-header">' +
+        '<span class="eyebrow">Método Panksero</span>' +
+        "<h1>Elegí tu nivel</h1>" +
+        '<p class="identidad">Tres formas de acceder al sistema completo, según cuánto acompañamiento necesitás.</p>' +
+      "</div>" +
+      '<div class="oferta-grid">' + cardsHtml + "</div>" +
+      '<p class="oferta-nota">Precios en pesos chilenos. El acceso se entrega automáticamente después de la compra.</p>';
+
+    attachRoutes(appEl);
+    showBack(true);
+  }
+
   function renderNoEncontrado() {
     appEl.innerHTML = '<p class="empty-state">No encontramos esa página. <button data-route="" class="back-btn" style="display:inline">Volver al inicio</button></p>';
     attachRoutes(appEl);
     showBack(true);
+  }
+
+  /* ---------------- Acceso (contenido pago) ---------------- */
+
+  function tieneAcceso() {
+    try {
+      return localStorage.getItem(window.CONFIG_ACCESO.STORAGE_KEY) === "1";
+    } catch (e) { return false; }
+  }
+
+  function guardarAcceso() {
+    try { localStorage.setItem(window.CONFIG_ACCESO.STORAGE_KEY, "1"); } catch (e) {}
+  }
+
+  function esGratis(nivel) { return nivel === "gratis"; }
+
+  function renderMuro(rutaIntentada) {
+    appEl.innerHTML =
+      '<div class="ficha-header">' +
+        '<span class="eyebrow">Contenido exclusivo</span>' +
+        "<h1>Necesitás tu código de acceso</h1>" +
+        '<p class="identidad">Esta parte del Método Panksero es de pago. Si ya compraste, ingresá el código que te llegó por email. Si todavía no, podés verlo en <a href="#oferta" class="muro-link" data-route="oferta">planes y precios</a>.</p>' +
+      "</div>" +
+      '<div class="muro-form">' +
+        '<input type="text" id="muro-codigo" class="calc-input" placeholder="Tu código de acceso" autocomplete="off">' +
+        '<button type="button" id="muro-btn" class="oferta-cta">Desbloquear</button>' +
+        '<p id="muro-error" class="muro-error" hidden>Ese código no es válido. Revisá mayúsculas/espacios, o escribinos si el problema sigue.</p>' +
+      "</div>";
+
+    attachRoutes(appEl);
+    showBack(true);
+
+    var input = document.getElementById("muro-codigo");
+    var btn = document.getElementById("muro-btn");
+    var errorEl = document.getElementById("muro-error");
+
+    function intentar() {
+      var codigo = input.value.trim();
+      if (!codigo) return;
+      btn.disabled = true;
+      btn.textContent = "Verificando…";
+      verificarCodigo(codigo).then(function (valido) {
+        btn.disabled = false;
+        btn.textContent = "Desbloquear";
+        if (valido) {
+          guardarAcceso();
+          location.hash = rutaIntentada;
+          route();
+        } else {
+          errorEl.hidden = false;
+        }
+      });
+    }
+
+    btn.addEventListener("click", intentar);
+    input.addEventListener("keydown", function (e) { if (e.key === "Enter") intentar(); });
+  }
+
+  function verificarCodigo(codigo) {
+    var base = window.CONFIG_ACCESO.FUNCTIONS_BASE_URL;
+    if (!base) {
+      console.warn("CONFIG_ACCESO.FUNCTIONS_BASE_URL no está configurado todavía.");
+      return Promise.resolve(false);
+    }
+    return fetch(base + "/.netlify/functions/verificar-codigo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ codigo: codigo })
+    })
+      .then(function (res) { return res.ok ? res.json() : { valido: false }; })
+      .then(function (data) { return !!data.valido; })
+      .catch(function () { return false; });
   }
 
   /* ---------------- Ruteo ---------------- */
@@ -447,11 +556,25 @@
     var hash = location.hash.replace(/^#/, "");
     if (!hash) { renderInicio(); showBack(false); return; }
     var parts = hash.split("/");
+
+    // Chequeo de acceso: todo lo que no sea explícitamente "gratis" queda
+    // detrás del muro, salvo el inicio y la oferta (siempre públicos).
+    if (parts[0] !== "oferta" && !tieneAcceso()) {
+      var capId = (parts[0] === "modulo" || parts[0] === "articulo") ? parts[1]
+        : (parts[0] === "ficha" || parts[0] === "problema") ? parts[1]
+        : null;
+      var esHerramienta = parts[0] === "herramienta";
+      var capitulo = capId != null ? getCapitulos()[capId] : null;
+      var requiereAcceso = esHerramienta || (capitulo && !esGratis(capitulo.nivel));
+      if (requiereAcceso) { renderMuro(hash); return; }
+    }
+
     if (parts[0] === "modulo" && parts[1]) { renderModulo(parts[1]); return; }
     if (parts[0] === "ficha" && parts[1] && parts[2]) { renderFicha(parts[1], parts[2]); return; }
     if (parts[0] === "problema" && parts[1] && parts[2]) { renderProblema(parts[1], parts[2]); return; }
     if (parts[0] === "articulo" && parts[1]) { renderArticulo(parts[1]); return; }
     if (parts[0] === "herramienta" && parts[1]) { renderHerramienta(parts[1]); return; }
+    if (parts[0] === "oferta") { renderOferta(); return; }
     renderInicio();
     showBack(false);
   }
