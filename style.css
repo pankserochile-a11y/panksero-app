@@ -103,7 +103,25 @@ main#app {
 
 /* ---------- Vista: Inicio ---------- */
 
-.hero { padding: 3.5rem 0 2.5rem; }
+.hero {
+  position: relative;
+  padding: 3.4rem 1.5rem 2.6rem;
+  margin: 0 0 0.5rem;
+  border: 1px solid var(--linea);
+  overflow: hidden;
+  isolation: isolate;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(180deg, rgba(16,22,26,0.35) 0%, rgba(16,22,26,0.86) 62%, var(--noche) 100%),
+    url("https://images.unsplash.com/photo-1644144299431-79b8f6e8b069?auto=format&fit=crop&w=1600&q=70");
+  background-size: cover;
+  background-position: center 28%;
+}
 
 .hero .eyebrow {
   display: inline-block;
@@ -444,6 +462,76 @@ footer.credito {
 @media (max-width: 560px) {
   .hero { padding-top: 2.2rem; }
   .datos-rapidos { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- Bandas fotográficas (separadores de sección) ---------- */
+
+.foto-banda {
+  position: relative;
+  margin: 0.5rem 0;
+  padding: 2.4rem 1.4rem;
+  text-align: center;
+  overflow: hidden;
+  border: 1px solid var(--linea);
+  isolation: isolate;
+}
+.foto-banda::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-size: cover;
+  background-position: center;
+}
+.foto-banda::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.foto-banda-frio::before {
+  background-image: url("https://images.unsplash.com/photo-1762172189607-91ee2d5f1e34?auto=format&fit=crop&w=1400&q=65");
+}
+.foto-banda-frio::after {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(111,224,232,0.16), transparent 60%),
+    linear-gradient(180deg, rgba(16,22,26,0.55), rgba(16,22,26,0.9));
+}
+.foto-banda-frio .foto-banda-eyebrow { color: var(--escarcha); }
+
+.foto-banda-horno::before {
+  background-image: url("https://images.unsplash.com/photo-1753012247961-feb139675068?auto=format&fit=crop&w=1400&q=65");
+  background-position: center 35%;
+}
+.foto-banda-horno::after {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255,122,61,0.18), transparent 60%),
+    linear-gradient(180deg, rgba(16,22,26,0.6), rgba(16,22,26,0.92));
+}
+.foto-banda-horno .foto-banda-eyebrow { color: var(--brasa); }
+
+.foto-banda-eyebrow {
+  display: inline-block;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+.foto-banda-quote {
+  font-family: "Big Shoulders Display", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.3rem, 3.4vw, 1.85rem);
+  text-transform: uppercase;
+  line-height: 1.15;
+  color: var(--vaho);
+  max-width: 38ch;
+  margin: 0 auto;
+}
+
+@media (max-width: 560px) {
+  .foto-banda { padding: 1.9rem 1.1rem; }
 }
 
 /* ---------- Herramientas (calculadoras) ---------- */

@@ -49,7 +49,7 @@
     var capitulos = getCapitulos();
     var ids = Object.keys(capitulos).sort(function (a, b) { return +a - +b; });
 
-    var cardsHtml = ids.map(function (id) {
+    function tarjetaCapitulo(id) {
       var c = capitulos[id];
       var ruta = c.tipo === "articulo" ? "articulo/" + esc(id) : "modulo/" + esc(id);
       var count = ((c.recetas && c.recetas.length) || (c.problemas && c.problemas.length) || 0);
@@ -65,7 +65,41 @@
           (count ? '<span class="module-sub">' + count + etiqueta + "</span>" : "") +
         "</button>"
       );
-    }).join("");
+    }
+
+    // Capítulos 1-5 (prólogo + frío/congelación) van antes de la banda "Frío positivo";
+    // el resto va después. Si alguno de los dos grupos queda vacío, se muestra
+    // todo en un único estante sin banda de por medio.
+    var idsFrio = ids.filter(function (id) { return +id <= 5; });
+    var idsCalor = ids.filter(function (id) { return +id > 5; });
+    var cardsFrioHtml = idsFrio.map(tarjetaCapitulo).join("");
+    var cardsCalorHtml = idsCalor.map(tarjetaCapitulo).join("");
+    var cardsHtml = ids.map(tarjetaCapitulo).join("");
+
+    var bandaFrio =
+      '<div class="foto-banda foto-banda-frio">' +
+        '<span class="foto-banda-eyebrow">Frío positivo</span>' +
+        '<p class="foto-banda-quote">Uno de los capítulos centrales del método.</p>' +
+      "</div>";
+
+    var bandaHorno =
+      '<div class="foto-banda foto-banda-horno">' +
+        '<span class="foto-banda-eyebrow">La masa manda</span>' +
+        '<p class="foto-banda-quote">El reloj es una herramienta, no la autoridad final.</p>' +
+      "</div>";
+
+    var seccionCapitulosHtml;
+    if (cardsFrioHtml && cardsCalorHtml) {
+      seccionCapitulosHtml =
+        '<p class="section-label">Capítulos disponibles</p>' +
+        '<div class="shelf">' + cardsFrioHtml + "</div>" +
+        bandaFrio +
+        '<div class="shelf">' + cardsCalorHtml + "</div>";
+    } else {
+      seccionCapitulosHtml =
+        '<p class="section-label">Capítulos disponibles</p>' +
+        '<div class="shelf">' + (cardsHtml || '<p class="empty-state">Todavía no hay capítulos cargados.</p>') + "</div>";
+    }
 
     var lockedHtml = getRoadmap().map(function (r) {
       return (
@@ -102,10 +136,10 @@
         '<button class="oferta-cta" data-route="oferta">Ver planes y precios →</button>' +
       "</section>" +
       '<div id="resultadosBuscador"></div>' +
-      '<p class="section-label">Capítulos disponibles</p>' +
-      '<div class="shelf">' + (cardsHtml || '<p class="empty-state">Todavía no hay capítulos cargados.</p>') + "</div>" +
+      seccionCapitulosHtml +
       '<p class="section-label">Herramientas</p>' +
       '<div class="shelf">' + herramientasHtml + "</div>" +
+      bandaHorno +
       '<p class="section-label">En construcción</p>' +
       '<div class="shelf">' + lockedHtml + "</div>" +
       '<footer class="credito">Método Panksero — libro digital interno</footer>';
