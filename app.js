@@ -144,7 +144,7 @@
       '<div class="shelf">' + lockedHtml + "</div>" +
       '<footer class="credito">' +
         '<p>Método Panksero — Sistema de producción para panaderías</p>' +
-        '<p class="credito-links"><a href="https://wa.me/56972930305" target="_blank" rel="noopener">WhatsApp</a> · <a href="https://instagram.com/panksero.chile" target="_blank" rel="noopener">Instagram</a></p>' +
+        '<p class="credito-links"><a href="https://wa.me/56972930305" target="_blank" rel="noopener">WhatsApp</a> · <a href="https://instagram.com/panksero.chile" target="_blank" rel="noopener">Instagram</a> · <a href="terminos.html">Términos</a> · <a href="privacidad.html">Privacidad</a></p>' +
         "</footer>";
 
     attachRoutes(appEl);
