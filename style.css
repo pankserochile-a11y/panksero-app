@@ -492,8 +492,8 @@ footer.credito {
 }
 
 .foto-banda-frio::before {
-  background-image: url("panka-02.jpg");
-  background-position: center 38%;
+  background-image: url("https://images.unsplash.com/photo-1644144299431-79b8f6e8b069?auto=format&fit=crop&w=1400&q=65");
+  background-position: center 30%;
 }
 .foto-banda-frio::after {
   background:
@@ -503,8 +503,8 @@ footer.credito {
 .foto-banda-frio .foto-banda-eyebrow { color: var(--escarcha); }
 
 .foto-banda-horno::before {
-  background-image: url("panka-03.jpg");
-  background-position: center 20%;
+  background-image: url("panka-02.jpg");
+  background-position: center 38%;
 }
 .foto-banda-horno::after {
   background:
