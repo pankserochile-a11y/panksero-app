@@ -118,9 +118,9 @@ main#app {
   z-index: -1;
   background-image:
     linear-gradient(180deg, rgba(16,22,26,0.35) 0%, rgba(16,22,26,0.86) 62%, var(--noche) 100%),
-    url("https://images.unsplash.com/photo-1644144299431-79b8f6e8b069?auto=format&fit=crop&w=1600&q=70");
+    url("panka-01.jpg");
   background-size: cover;
-  background-position: center 28%;
+  background-position: center 18%;
 }
 
 .hero .eyebrow {
@@ -492,7 +492,8 @@ footer.credito {
 }
 
 .foto-banda-frio::before {
-  background-image: url("https://images.unsplash.com/photo-1762172189607-91ee2d5f1e34?auto=format&fit=crop&w=1400&q=65");
+  background-image: url("panka-02.jpg");
+  background-position: center 38%;
 }
 .foto-banda-frio::after {
   background:
@@ -502,8 +503,8 @@ footer.credito {
 .foto-banda-frio .foto-banda-eyebrow { color: var(--escarcha); }
 
 .foto-banda-horno::before {
-  background-image: url("https://images.unsplash.com/photo-1753012247961-feb139675068?auto=format&fit=crop&w=1400&q=65");
-  background-position: center 35%;
+  background-image: url("panka-03.jpg");
+  background-position: center 20%;
 }
 .foto-banda-horno::after {
   background:
