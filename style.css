@@ -715,3 +715,125 @@ footer.credito {
   margin-bottom: 1.2rem;
   box-shadow: 0 4px 18px rgba(255, 122, 61, 0.18);
 }
+
+
+/* ---------- Oferta (precios) ---------- */
+
+.oferta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1px;
+  background: var(--linea);
+  border: 1px solid var(--linea);
+  margin-top: 1.6rem;
+}
+
+.oferta-card {
+  background: var(--acero);
+  padding: 1.6rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.oferta-card-destacada { background: #202A30; }
+
+.oferta-badge {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  background: var(--brasa);
+  color: var(--noche);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+}
+
+.oferta-nombre {
+  font-family: "Big Shoulders Display", sans-serif;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  margin: 0 0 0.6rem;
+  color: var(--vaho);
+}
+
+.oferta-precio {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.oferta-tipo {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--grafito);
+}
+
+.oferta-monto {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--escarcha);
+}
+
+.oferta-duracion {
+  font-size: 0.85rem;
+  color: var(--grafito);
+  margin: 0 0 0.8rem;
+}
+
+.oferta-incluye {
+  list-style: none;
+  margin: 0.8rem 0 1.4rem;
+  padding: 0;
+  flex: 1;
+}
+
+.oferta-incluye li {
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--linea);
+  font-size: 0.9rem;
+  color: var(--vaho);
+}
+
+.oferta-incluye li:last-child { border-bottom: none; }
+
+.oferta-cta-link {
+  display: block;
+  text-align: center;
+  background: var(--brasa);
+  color: var(--noche);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius);
+  transition: opacity 0.15s;
+}
+
+.oferta-cta-link:hover { opacity: 0.85; }
+
+.oferta-nota {
+  margin-top: 1.6rem;
+  font-size: 0.82rem;
+  color: var(--grafito);
+  max-width: 62ch;
+}
+
+.oferta-nota a { color: var(--escarcha); }
+
+footer.credito p { margin: 0.3rem 0; }
+
+.credito-links a {
+  color: var(--escarcha);
+  text-decoration: none;
+}
+
+.credito-links a:hover { text-decoration: underline; }
