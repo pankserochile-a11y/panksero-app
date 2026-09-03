@@ -142,7 +142,10 @@
       bandaHorno +
       '<p class="section-label">En construcción</p>' +
       '<div class="shelf">' + lockedHtml + "</div>" +
-      '<footer class="credito">Método Panksero — libro digital interno</footer>';
+      '<footer class="credito">' +
+        '<p>Método Panksero — Sistema de producción para panaderías</p>' +
+        '<p class="credito-links"><a href="https://wa.me/56972930305" target="_blank" rel="noopener">WhatsApp</a> · <a href="https://instagram.com/panksero.chile" target="_blank" rel="noopener">Instagram</a></p>' +
+        "</footer>";
 
     attachRoutes(appEl);
 
@@ -477,34 +480,37 @@
     return "$" + n.toLocaleString("es-CL");
   }
 
-  function renderOferta() {
-    var cfg = window.PRECIOS;
-    if (!cfg) { renderNoEncontrado(); return; }
+function renderOferta() {
+  var cfg = window.PRECIOS;
+  if (!cfg) { renderNoEncontrado(); return; }
 
-    var cardsHtml = cfg.niveles.map(function (nivel) {
-      var itemsHtml = nivel.incluye.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("");
-      return (
-        '<div class="oferta-card' + (nivel.destacado ? " oferta-card-destacada" : "") + '">' +
-          (nivel.destacado ? '<span class="oferta-badge">Más elegido</span>' : "") +
-          '<h3 class="oferta-nombre">' + esc(nivel.nombre) + "</h3>" +
-          '<div class="oferta-precio"><span class="oferta-tipo">' + esc(nivel.tipo) + '</span><span class="oferta-monto mono">' + fmtCLP(nivel.precio) + " " + esc(cfg.moneda) + "</span></div>" +
-          '<ul class="oferta-incluye">' + itemsHtml + "</ul>" +
-        "</div>"
-      );
-    }).join("");
+  var cardsHtml = cfg.niveles.map(function (nivel) {
+    var itemsHtml = nivel.incluye.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("");
+    var ctaHtml = nivel.cta ? '<a class="oferta-cta-link" href="' + esc(nivel.cta.url) + '" target="_blank" rel="noopener">' + esc(nivel.cta.texto) + "</a>" : "";
+    return (
+      '<div class="oferta-card' + (nivel.destacado ? " oferta-card-destacada" : "") + '">' +
+      (nivel.destacado ? '<span class="oferta-badge">Más elegido</span>' : "") +
+      '<h3 class="oferta-nombre">' + esc(nivel.nombre) + "</h3>" +
+      '<div class="oferta-precio"><span class="oferta-tipo">' + esc(nivel.tipo) + '</span><span class="oferta-monto mono">' + fmtCLP(nivel.precio) + " " + esc(cfg.moneda) + "</span></div>" +
+      (nivel.duracion ? '<p class="oferta-duracion">' + esc(nivel.duracion) + "</p>" : "") +
+      '<ul class="oferta-incluye">' + itemsHtml + "</ul>" +
+      ctaHtml +
+      "</div>"
+    );
+  }).join("");
 
-    appEl.innerHTML =
-      '<div class="ficha-header">' +
-        '<span class="eyebrow">Método Panksero</span>' +
-        "<h1>Elegí tu nivel</h1>" +
-        '<p class="identidad">Tres formas de acceder al sistema completo, según cuánto acompañamiento necesitás.</p>' +
-      "</div>" +
-      '<div class="oferta-grid">' + cardsHtml + "</div>" +
-      '<p class="oferta-nota">Precios en pesos chilenos. El acceso se entrega automáticamente después de la compra.</p>';
+  appEl.innerHTML =
+    '<div class="ficha-header">' +
+    '<span class="eyebrow">Método Panksero</span>' +
+    "<h1>Elegí tu nivel</h1>" +
+    '<p class="identidad">Dos formas de acceder al sistema, según cuánto acompañamiento necesitás.</p>' +
+    "</div>" +
+    '<div class="oferta-grid">' + cardsHtml + "</div>" +
+    '<p class="oferta-nota">Precios en pesos chilenos. El acceso se entrega automáticamente después de la compra. Por ser contenido digital de entrega inmediata, todas las ventas son finales: no se realizan reembolsos una vez enviado el código de acceso. ¿Problemas con tu compra o tu código? <a href="https://wa.me/56972930305" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>.</p>';
 
-    attachRoutes(appEl);
-    showBack(true);
-  }
+  attachRoutes(appEl);
+  showBack(true);
+}
 
   function renderNoEncontrado() {
     appEl.innerHTML = '<p class="empty-state">No encontramos esa página. <button data-route="" class="back-btn" style="display:inline">Volver al inicio</button></p>';
