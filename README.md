@@ -12,6 +12,38 @@ pendiente de migrar del libro actual. Si se agrega un capítulo nuevo al
 libro más adelante, ahí es donde vuelve a aparecer como "próximamente"
 hasta que se migre.
 
+## Sistema de acceso (contenido pago)
+
+- La app en sí sigue en GitHub Pages, sin cambios de hosting.
+- Solo las dos funciones que necesitan servidor viven en un proyecto
+  aparte de Netlify (`netlify/functions/`): reciben el webhook de
+  Hotmart y verifican códigos. La app les pega por `fetch`.
+- Gratis: Prólogo, Capítulo 1, Capítulo 16 (marcados `nivel: "gratis"`
+  en su archivo `contenido-*.js`). Todo lo demás — capítulos 2 a 15 y
+  17, Bonos, y las herramientas — pide código.
+- MVP: un solo código desbloquea todo el contenido pago, sin
+  diferenciar niveles de precio. Si más adelante hace falta separar
+  por nivel, se agrega un campo `nivel` a cada capítulo (igual que
+  `gratis`) y se ajusta el chequeo en `route()`.
+
+### Cómo desplegar el backend (una sola vez)
+
+1. Crear un sitio nuevo en Netlify a partir de esta misma carpeta
+   (puede ser un repo aparte solo con `netlify.toml` y
+   `netlify/functions/` — no hace falta que sirva la app).
+2. En Netlify → Site settings → Environment variables, cargar:
+   - `HOTMART_HOTTOK` — el token que Hotmart muestra al crear el webhook.
+   - `RESEND_API_KEY` — API key de [resend.com](https://resend.com) (u otro proveedor de email; hay que adaptar `hotmart-webhook.js` si se usa otro).
+   - `RESEND_FROM` — remitente verificado, ej. `"Panksero <acceso@tudominio.cl>"`.
+   - `SITE_URL` — la URL pública de la app (la de GitHub Pages).
+3. En Hotmart, por cada producto: Herramientas → Webhook (Postback) →
+   pegar `https://TU-SITIO.netlify.app/.netlify/functions/hotmart-webhook`,
+   evento "Compra aprovada/aprobada".
+4. En `config-acceso.js` de la app, completar `FUNCTIONS_BASE_URL` con
+   la URL del sitio de Netlify, y volver a subir ese archivo a GitHub Pages.
+5. Probar con el botón de test de webhook de Hotmart, y revisar los
+   logs de la función en Netlify (Functions → hotmart-webhook → logs).
+
 ## Archivos
 
 - `index.html` — carga fuentes, estilos y scripts en orden.
@@ -50,6 +82,14 @@ hasta que se migre.
   (usa una lista de `keywords` por problema).
 - `contenido-roadmap.js` — lista de los capítulos que faltan por migrar,
   para que se vean "próximamente" en el inicio.
+- `herramienta-planificador-semanal.js` — Bono 1 hecho herramienta real:
+  planificador semanal de producción por producto (producción, stock
+  congelado, enviado a frío positivo, programado, horneado, día por día).
+  Se guarda solo en `localStorage` del dispositivo, sin backend. Si un
+  producto se vincula a una receta del Capítulo 11 y tiene producción
+  cargada, calcula la proyección de ingredientes necesarios para la
+  semana. Incluye vista de impresión (`@media print` en `style.css`) para
+  imprimir solo la tabla consolidada.
 
 ## Cómo agregar el Capítulo 4, 5, 6... (o cualquier otro)
 

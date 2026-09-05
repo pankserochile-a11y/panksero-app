@@ -22,6 +22,7 @@ window.CAPITULOS[11] = {
       rol: "Masa panadera salada — alta rotación",
       identidad: "Pan de tipo francés, formato pack 5 y pack 10 unidades.",
       rendimiento: "Batch de 14 kg → 140 panes (~100 g c/u).",
+      rendimientoUnidades: 140,
       datosRapidos: { pesoUnidad: "~100 g", proceso: "Retardo en cuarto frío", hidratacion: "44,2%", grasa: "3,3%", dificultad: null },
       tiempos: { congelacion: "12–14 h", frioPositivo: "Toda la noche (16 °C / 22 °C)", horneado: "~25 min (180 °C ref.)" },
       formula: [
@@ -55,6 +56,7 @@ window.CAPITULOS[11] = {
       rol: "Masa panadera dulce — producción nocturna",
       identidad: "Única receta de la familia de masa panadera dulce: comparte circuito de frío con las masas panaderas saladas, pero es una familia de masa aparte.",
       rendimiento: "Lote de 6.800 g de masa → 16 piezas (~425 g c/u).",
+      rendimientoUnidades: 16,
       datosRapidos: { pesoUnidad: "~425 g", proceso: "Retardo en cuarto frío", hidratacion: "34,6%", grasa: "8,0%", dificultad: null },
       tiempos: { congelacion: "12–14 h", frioPositivo: "Toda la noche (16 °C / 22 °C)", horneado: "~20 min (180 °C ref.)" },
       formula: [
@@ -89,6 +91,7 @@ window.CAPITULOS[11] = {
       rol: "Masa hojaldrada salada — producto relleno",
       identidad: "Hojaldre salado relleno con queso palmita; usa la misma masa que Empanada JQC.",
       rendimiento: "24 unidades por batch.",
+      rendimientoUnidades: 24,
       datosRapidos: { pesoUnidad: "~215 g (calculado, incluye relleno)", proceso: "Frío positivo + fermentadora", hidratacion: "50,0%", grasa: "46,3% (incluye empaste)", dificultad: null },
       tiempos: { congelacion: "Después del formado (12–14 h general)", frioPositivo: "Nevera 7–8 °C toda la noche + 1 h fermentadora (27 °C / 80% humedad)", horneado: "~40 min (180 °C ref.)" },
       formula: [
@@ -126,6 +129,7 @@ window.CAPITULOS[11] = {
       rol: "Masa hojaldrada dulce — fermentación controlada",
       identidad: "Masa laminada mix 80% Fortaleza Plus + 20% Regular; pastón 73,25% + empaste 26,75% de la masa total. Margen real confirmado (Media Luna): 48,3%.",
       rendimiento: "50 unidades por batch, ~85 g pieza cruda (masa total 4.250 g).",
+      rendimientoUnidades: 50,
       datosRapidos: { pesoUnidad: "~85 g", proceso: "Frío positivo + fermentadora", hidratacion: "42,4%", grasa: "84,1% (incluye empaste, típico de laminados)", dificultad: null },
       tiempos: { congelacion: "Después del formado (12–14 h general)", frioPositivo: "Nevera 7–8 °C toda la noche + 1 h fermentadora (27 °C / 80% humedad)", horneado: "180 °C — sin tiempo de referencia registrado" },
       formula: [

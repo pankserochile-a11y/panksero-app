@@ -1,6 +1,6 @@
 window.CAPITULOS = window.CAPITULOS || {};
 window.CAPITULOS[1] = {
-  numero: 1, titulo: "Bienvenidos al método Panksero", tipo: "articulo", estado: "disponible",
+  numero: 1, nivel: "gratis", titulo: "Bienvenidos al método Panksero", tipo: "articulo", estado: "disponible",
   subtitulo: "De qué se trata Panksero y por qué nació este método.",
   secciones: [
     { titulo: "Qué es Panksero", parrafos: [

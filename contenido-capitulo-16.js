@@ -1,6 +1,6 @@
 window.CAPITULOS = window.CAPITULOS || {};
 window.CAPITULOS[16] = {
-  numero: 16, titulo: "El método Panksero en una sola página", tipo: "articulo", estado: "disponible",
+  numero: 16, nivel: "gratis", titulo: "El método Panksero en una sola página", tipo: "articulo", estado: "disponible",
   subtitulo: "El ciclo completo, de principio a fin.",
   secciones: [
     { titulo: "El ciclo completo", lista: [
