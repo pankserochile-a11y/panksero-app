@@ -1070,3 +1070,16 @@ text-decoration: none;
 .plan-receta-select { max-width: 220px; font-size: 0.82rem; }
 .plan-proyeccion { margin-top: 0.6rem; }
 .plan-tabla-proyeccion td:last-child { text-align: right; color: var(--brasa); font-family: "IBM Plex Mono", monospace; }
+.plan-tabla-proyeccion th:nth-child(3), .plan-tabla-proyeccion th:nth-child(4) { text-align: right; }
+.plan-tabla-proyeccion td:nth-child(3) { text-align: right; }
+.plan-precio-insumo { width: 100%; max-width: 110px; text-align: right; padding: 0.4rem 0.5rem; margin-left: auto; display: block; }
+.plan-inversion-resumen { margin-top: 0.8rem; }
+
+@media (max-width: 640px) {
+  .plan-tabla-proyeccion { font-size: 0.78rem; }
+  .plan-precio-insumo { max-width: 80px; padding: 0.3rem 0.4rem; }
+}
+
+@media print {
+  .plan-tabla-proyeccion input { border: none; background: none; }
+}

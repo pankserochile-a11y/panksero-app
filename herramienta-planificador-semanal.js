@@ -18,11 +18,16 @@ window.HERRAMIENTAS = window.HERRAMIENTAS || {};
 window.HERRAMIENTAS["planificador-semanal"] = {
   id: "planificador-semanal",
   titulo: "Planificador semanal",
-  subtitulo: "Bono 1 — producción, stock, frío positivo y horneado por producto, día a día.",
+  subtitulo: "Bono 1 — producción, stock, frío positivo y horneado por producto, día a día. Incluye la lista de insumos necesarios en volumen e inversión.",
   eyebrow: "Herramienta",
 
   render: function (container) {
     var STORAGE_KEY = "panksero_planificador_semanal";
+    // Catálogo de precios de insumos: se comparte entre semanas y entre
+    // todos los productos — un insumo (ej. "Harina panadera") se carga
+    // una sola vez y de ahí en adelante cualquier receta que lo use ya
+    // sale con precio en la proyección de inversión.
+    var STORAGE_KEY_PRECIOS = "panksero_precios_insumos";
     var DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
     var FILAS = [
       { key: "produccion", label: "Producción" },
@@ -65,6 +70,27 @@ window.HERRAMIENTAS["planificador-semanal"] = {
         var n = parseFloat(String(v).replace(",", "."));
         return s + (isNaN(n) ? 0 : n);
       }, 0);
+    }
+
+    function cargarPrecios() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY_PRECIOS);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return {};
+    }
+
+    function guardarPrecio(nombre, precioPorKg) {
+      try {
+        var precios = cargarPrecios();
+        if (precioPorKg > 0) precios[nombre] = precioPorKg;
+        else delete precios[nombre];
+        localStorage.setItem(STORAGE_KEY_PRECIOS, JSON.stringify(precios));
+      } catch (e) {}
+    }
+
+    function fmtCLP(n) {
+      return "$" + Math.round(n).toLocaleString("es-CL");
     }
 
     function cargar() {
@@ -204,20 +230,121 @@ window.HERRAMIENTAS["planificador-semanal"] = {
         });
       });
 
+      proyeccionEl.innerHTML = "";
+
       if (!recetasUsadas) {
-        proyeccionEl.innerHTML = '<p class="calc-intro">Vinculá al menos un producto a una receta del Capítulo 11 y cargá su producción semanal para ver la proyección acá.</p>';
+        var vacio = document.createElement("p");
+        vacio.className = "calc-intro";
+        vacio.textContent = "Vinculá al menos un producto a una receta del Capítulo 11 y cargá su producción semanal para ver acá la lista de insumos, en volumen y en inversión.";
+        proyeccionEl.appendChild(vacio);
         return;
       }
 
-      var filas = Object.keys(totalesIngredientes).sort().map(function (nombre) {
-        var g = totalesIngredientes[nombre];
-        var texto = g >= 1000 ? (g / 1000).toLocaleString("es-CL", { maximumFractionDigits: 2 }) + " kg" : Math.round(g) + " g";
-        return "<tr><td>" + nombre + "</td><td>" + texto + "</td></tr>";
-      }).join("");
+      // La tabla se arma una sola vez con DOM (no con innerHTML) para que
+      // escribir un precio nunca reconstruya los inputs de precio — mismo
+      // cuidado de foco que en el resto de la herramienta. Cada fila
+      // guarda su propia referencia (kg, input, celda de subtotal) y
+      // "refrescarFilaYTotal" solo actualiza texto, nunca recrea nada.
+      var precios = cargarPrecios();
+      var nombresOrdenados = Object.keys(totalesIngredientes).sort();
+      var filasInfo = [];
 
-      proyeccionEl.innerHTML =
-        '<table class="formula plan-tabla-proyeccion"><thead><tr><th>Ingrediente</th><th>Cantidad necesaria (semana)</th></tr></thead><tbody>' + filas + "</tbody></table>" +
-        (sinVincular.length ? '<p class="calc-nota-verificacion">Sin vincular a receta (no entran en la proyección): ' + sinVincular.join(", ") + "</p>" : "");
+      var table = document.createElement("table");
+      table.className = "formula plan-tabla-proyeccion";
+      var thead = document.createElement("thead");
+      thead.innerHTML = "<tr><th>Insumo</th><th>Cantidad necesaria (semana)</th><th>Precio / kg</th><th>Inversión</th></tr>";
+      table.appendChild(thead);
+
+      var tbody = document.createElement("tbody");
+      nombresOrdenados.forEach(function (nombre) {
+        var gramos = totalesIngredientes[nombre];
+        var kg = gramos / 1000;
+        var textoCantidad = gramos >= 1000 ? kg.toLocaleString("es-CL", { maximumFractionDigits: 2 }) + " kg" : Math.round(gramos) + " g";
+
+        var tr = document.createElement("tr");
+
+        var tdNombre = document.createElement("td");
+        tdNombre.textContent = nombre;
+        tr.appendChild(tdNombre);
+
+        var tdCantidad = document.createElement("td");
+        tdCantidad.textContent = textoCantidad;
+        tr.appendChild(tdCantidad);
+
+        var tdPrecio = document.createElement("td");
+        var precioInput = document.createElement("input");
+        precioInput.type = "number";
+        precioInput.inputMode = "decimal";
+        precioInput.min = "0";
+        precioInput.className = "calc-input calc-input-num plan-precio-insumo";
+        precioInput.placeholder = "0";
+        precioInput.setAttribute("aria-label", "Precio por kilo de " + nombre);
+        if (precios[nombre] != null) precioInput.value = precios[nombre];
+        tdPrecio.appendChild(precioInput);
+        tr.appendChild(tdPrecio);
+
+        var tdSubtotal = document.createElement("td");
+        tdSubtotal.className = "mono";
+        tr.appendChild(tdSubtotal);
+
+        tbody.appendChild(tr);
+        filasInfo.push({ kg: kg, input: precioInput, tdSubtotal: tdSubtotal });
+
+        precioInput.addEventListener("input", function () {
+          var valor = parseFloat(String(precioInput.value).replace(",", "."));
+          guardarPrecio(nombre, valor > 0 ? valor : null);
+          refrescarFilaYTotal();
+        });
+      });
+      table.appendChild(tbody);
+      proyeccionEl.appendChild(table);
+
+      var totalDiv = document.createElement("div");
+      totalDiv.className = "calc-results plan-inversion-resumen";
+      var totalRow = document.createElement("div");
+      totalRow.className = "calc-result calc-result-highlight";
+      var totalLabel = document.createElement("span");
+      totalLabel.className = "k";
+      totalLabel.textContent = "Inversión total estimada en insumos (semana)";
+      var totalValor = document.createElement("span");
+      totalValor.className = "v mono";
+      totalRow.appendChild(totalLabel);
+      totalRow.appendChild(totalValor);
+      totalDiv.appendChild(totalRow);
+      proyeccionEl.appendChild(totalDiv);
+
+      var notaPrecios = document.createElement("p");
+      notaPrecios.className = "calc-nota-verificacion";
+      proyeccionEl.appendChild(notaPrecios);
+
+      function refrescarFilaYTotal() {
+        var total = 0;
+        var faltan = 0;
+        filasInfo.forEach(function (f) {
+          var precio = parseFloat(String(f.input.value).replace(",", "."));
+          if (precio > 0) {
+            var subtotal = f.kg * precio;
+            f.tdSubtotal.textContent = fmtCLP(subtotal);
+            total += subtotal;
+          } else {
+            f.tdSubtotal.textContent = "—";
+            faltan++;
+          }
+        });
+        totalValor.textContent = fmtCLP(total);
+        notaPrecios.textContent = faltan
+          ? "Cargá el precio por kilo de " + faltan + " insumo" + (faltan > 1 ? "s" : "") + " más para que entre" + (faltan > 1 ? "n" : "") + " en la inversión total. Los precios quedan guardados en este dispositivo y se reusan la próxima vez que aparezca el mismo insumo."
+          : "Los precios quedan guardados en este dispositivo — la próxima vez que uses estos insumos ya van a salir con precio cargado.";
+      }
+
+      refrescarFilaYTotal();
+
+      if (sinVincular.length) {
+        var notaSin = document.createElement("p");
+        notaSin.className = "calc-nota-verificacion";
+        notaSin.textContent = "Sin vincular a receta (no entran en la lista de insumos): " + sinVincular.join(", ");
+        proyeccionEl.appendChild(notaSin);
+      }
     }
 
     // --- Construcción inicial (una sola vez) ---
@@ -261,7 +388,7 @@ window.HERRAMIENTAS["planificador-semanal"] = {
 
     var proyeccionLabel = document.createElement("p");
     proyeccionLabel.className = "calc-section-label";
-    proyeccionLabel.textContent = "Proyección de ingredientes de la semana";
+    proyeccionLabel.textContent = "Lista de insumos de la semana: volumen e inversión";
     wrap.appendChild(proyeccionLabel);
 
     var proyeccionEl = document.createElement("div");
