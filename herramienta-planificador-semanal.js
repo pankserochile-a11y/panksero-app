@@ -12,23 +12,35 @@
  * Incluye un botón "Imprimir consolidado" — usa la vista de impresión
  * del navegador con una hoja de estilos propia (@media print en
  * style.css) para dejar solo la tabla, sin la interfaz de la app.
+ *
+ * Calendario: cada semana calendario (lunes a domingo) guarda su propia
+ * planificación por separado, con flechas para moverse entre semanas.
+ * Así queda historial real — no se pisa lo de la semana pasada — y las
+ * columnas de la tabla muestran la fecha real, no un "Lun/Mar" genérico
+ * que no dice a qué semana pertenece.
  */
 window.HERRAMIENTAS = window.HERRAMIENTAS || {};
 
 window.HERRAMIENTAS["planificador-semanal"] = {
   id: "planificador-semanal",
   titulo: "Planificador semanal",
-  subtitulo: "Bono 1 — producción, stock, frío positivo y horneado por producto, día a día. Incluye la lista de insumos necesarios en volumen e inversión.",
+  subtitulo: "Bono 1 — producción, stock, frío positivo y horneado por producto, semana a semana con calendario real. Incluye la lista de insumos necesarios en volumen e inversión.",
   eyebrow: "Herramienta",
 
   render: function (container) {
+    // STORAGE_KEY: formato viejo (antes del calendario), solo se lee una
+    // vez para migrar esos datos a la semana actual la primera vez que
+    // se carga esta versión — nunca más se escribe ahí.
     var STORAGE_KEY = "panksero_planificador_semanal";
+    // Formato nuevo: un objeto { "AAAA-MM-DD" (lunes de la semana): { productos: [...] } }
+    var STORAGE_KEY_SEMANAS = "panksero_planificador_semanas";
     // Catálogo de precios de insumos: se comparte entre semanas y entre
     // todos los productos — un insumo (ej. "Harina panadera") se carga
     // una sola vez y de ahí en adelante cualquier receta que lo use ya
     // sale con precio en la proyección de inversión.
     var STORAGE_KEY_PRECIOS = "panksero_precios_insumos";
-    var DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+    var DIA_ABREV = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+    var MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
     var FILAS = [
       { key: "produccion", label: "Producción" },
       { key: "stockCongelado", label: "Stock congelado" },
@@ -42,6 +54,49 @@ window.HERRAMIENTAS["planificador-semanal"] = {
       var p = { nombre: "", recetaId: "" };
       FILAS.forEach(function (f) { p[f.key] = diasVacios(); });
       return p;
+    }
+
+    // --- Calendario: helpers de fecha (sin dependencias externas) ---
+
+    function lunesDe(fecha) {
+      var d = new Date(fecha);
+      d.setHours(0, 0, 0, 0);
+      var dia = d.getDay(); // 0 = domingo ... 6 = sábado
+      var diff = dia === 0 ? -6 : 1 - dia;
+      d.setDate(d.getDate() + diff);
+      return d;
+    }
+
+    function sumarDias(fecha, n) {
+      var d = new Date(fecha);
+      d.setDate(d.getDate() + n);
+      return d;
+    }
+
+    function isoDeFecha(d) {
+      var m = String(d.getMonth() + 1);
+      var day = String(d.getDate());
+      return d.getFullYear() + "-" + (m.length < 2 ? "0" + m : m) + "-" + (day.length < 2 ? "0" + day : day);
+    }
+
+    function diasDeSemana(lunes) {
+      var arr = [];
+      for (var i = 0; i < 7; i++) {
+        var d = sumarDias(lunes, i);
+        arr.push({ abrev: DIA_ABREV[i], numero: d.getDate(), iso: isoDeFecha(d) });
+      }
+      return arr;
+    }
+
+    function formatearRangoSemana(lunes) {
+      var domingo = sumarDias(lunes, 6);
+      var mismoMes = lunes.getMonth() === domingo.getMonth();
+      var anioActual = new Date().getFullYear();
+      var sufijoAnio = domingo.getFullYear() === anioActual ? "" : " de " + domingo.getFullYear();
+      if (mismoMes) {
+        return "Semana del " + lunes.getDate() + " al " + domingo.getDate() + " de " + MESES[domingo.getMonth()] + sufijoAnio;
+      }
+      return "Semana del " + lunes.getDate() + " de " + MESES[lunes.getMonth()] + " al " + domingo.getDate() + " de " + MESES[domingo.getMonth()] + sufijoAnio;
     }
 
     function getRecetas() {
@@ -93,28 +148,80 @@ window.HERRAMIENTAS["planificador-semanal"] = {
       return "$" + Math.round(n).toLocaleString("es-CL");
     }
 
-    function cargar() {
+    function cargarTodasLasSemanas() {
       try {
-        var raw = localStorage.getItem(STORAGE_KEY);
+        var raw = localStorage.getItem(STORAGE_KEY_SEMANAS);
         if (raw) return JSON.parse(raw);
       } catch (e) {}
-      return { productos: [productoVacio()] };
+      return {};
     }
 
-    var state = cargar();
-    if (!state.productos || !state.productos.length) state.productos = [productoVacio()];
+    function guardarTodasLasSemanas(semanas) {
+      try { localStorage.setItem(STORAGE_KEY_SEMANAS, JSON.stringify(semanas)); } catch (e) {}
+    }
 
-    var guardadoEl, listEl;
+    // La primera vez que se abre esta versión (con calendario), si nunca
+    // se guardó nada en el formato nuevo pero sí existe el registro viejo
+    // (de antes de tener semanas separadas), lo migramos a la semana
+    // actual para no perder lo que ya estaba cargado.
+    function migrarSiHaceFalta(semanas, claveHoy) {
+      if (Object.keys(semanas).length) return semanas;
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          var viejo = JSON.parse(raw);
+          if (viejo && viejo.productos && viejo.productos.length) {
+            semanas[claveHoy] = viejo;
+          }
+        }
+      } catch (e) {}
+      return semanas;
+    }
+
+    var hoy = new Date();
+    var lunesActual = lunesDe(hoy);
+    var claveSemanaActual = isoDeFecha(lunesActual);
+    var todasLasSemanas = migrarSiHaceFalta(cargarTodasLasSemanas(), claveSemanaActual);
+
+    var lunesVisible = lunesActual;
+
+    function claveDe(lunes) { return isoDeFecha(lunes); }
+
+    function cargarSemana(lunes) {
+      var datos = todasLasSemanas[claveDe(lunes)];
+      if (!datos || !datos.productos || !datos.productos.length) {
+        datos = { productos: [productoVacio()] };
+      }
+      return datos;
+    }
+
+    var state = cargarSemana(lunesVisible);
+
+    var guardadoEl, listEl, semanaLabelEl, volverHoyBtn;
 
     function guardar() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        todasLasSemanas[claveDe(lunesVisible)] = state;
+        guardarTodasLasSemanas(todasLasSemanas);
         if (guardadoEl) {
           guardadoEl.textContent = "Guardado ✓";
           clearTimeout(guardar._t);
           guardar._t = setTimeout(function () { if (guardadoEl) guardadoEl.textContent = ""; }, 1200);
         }
       } catch (e) {}
+    }
+
+    function irASemana(nuevoLunes) {
+      lunesVisible = nuevoLunes;
+      state = cargarSemana(lunesVisible);
+      actualizarEncabezadoSemana();
+      renderLista();
+    }
+
+    function actualizarEncabezadoSemana() {
+      if (!semanaLabelEl) return;
+      semanaLabelEl.textContent = formatearRangoSemana(lunesVisible);
+      if (volverHoyBtn) volverHoyBtn.hidden = claveDe(lunesVisible) === claveSemanaActual;
     }
 
     function tablaProducto(producto, idx) {
@@ -166,7 +273,11 @@ window.HERRAMIENTAS["planificador-semanal"] = {
       var table = document.createElement("table");
       table.className = "formula plan-tabla";
       var thead = document.createElement("thead");
-      thead.innerHTML = "<tr><th></th>" + DIAS.map(function (d) { return "<th>" + d + "</th>"; }).join("") + "</tr>";
+      var hoyIso = isoDeFecha(hoy);
+      thead.innerHTML = "<tr><th></th>" + diasDeSemana(lunesVisible).map(function (d) {
+        var esHoy = d.iso === hoyIso;
+        return "<th>" + d.abrev + " " + d.numero + (esHoy ? ' <span class="plan-dia-hoy no-print">hoy</span>' : "") + "</th>";
+      }).join("") + "</tr>";
       table.appendChild(thead);
 
       var tbody = document.createElement("tbody");
@@ -176,7 +287,7 @@ window.HERRAMIENTAS["planificador-semanal"] = {
         th.className = "plan-fila-label";
         th.textContent = fila.label;
         tr.appendChild(th);
-        DIAS.forEach(function (_, diaIdx) {
+        DIA_ABREV.forEach(function (_, diaIdx) {
           var td = document.createElement("td");
           var input = document.createElement("input");
           input.type = "text";
@@ -351,9 +462,41 @@ window.HERRAMIENTAS["planificador-semanal"] = {
     var wrap = document.createElement("div");
     wrap.className = "calc-tool";
 
+    var semanaNav = document.createElement("div");
+    semanaNav.className = "plan-semana-nav";
+
+    var prevBtn = document.createElement("button");
+    prevBtn.type = "button";
+    prevBtn.className = "plan-semana-flecha no-print";
+    prevBtn.setAttribute("aria-label", "Semana anterior");
+    prevBtn.textContent = "←";
+    prevBtn.addEventListener("click", function () { irASemana(sumarDias(lunesVisible, -7)); });
+
+    semanaLabelEl = document.createElement("span");
+    semanaLabelEl.className = "plan-semana-label";
+
+    var nextBtn = document.createElement("button");
+    nextBtn.type = "button";
+    nextBtn.className = "plan-semana-flecha no-print";
+    nextBtn.setAttribute("aria-label", "Semana siguiente");
+    nextBtn.textContent = "→";
+    nextBtn.addEventListener("click", function () { irASemana(sumarDias(lunesVisible, 7)); });
+
+    volverHoyBtn = document.createElement("button");
+    volverHoyBtn.type = "button";
+    volverHoyBtn.className = "plan-semana-hoy no-print";
+    volverHoyBtn.textContent = "Volver a esta semana";
+    volverHoyBtn.addEventListener("click", function () { irASemana(lunesActual); });
+
+    semanaNav.appendChild(prevBtn);
+    semanaNav.appendChild(semanaLabelEl);
+    semanaNav.appendChild(nextBtn);
+    semanaNav.appendChild(volverHoyBtn);
+    wrap.appendChild(semanaNav);
+
     var introDiv = document.createElement("p");
     introDiv.className = "calc-intro no-print";
-    introDiv.textContent = "Un producto por tarjeta, cinco filas fijas, siete días. Se guarda solo en este dispositivo a medida que escribís — no hace falta ningún botón de guardar.";
+    introDiv.textContent = "Un producto por tarjeta, cinco filas fijas, siete días. Cada semana calendario guarda su propia planificación — usá las flechas para moverte entre semanas. Se guarda solo en este dispositivo a medida que escribís, no hace falta ningún botón de guardar.";
     wrap.appendChild(introDiv);
 
     var topRow = document.createElement("div");
@@ -398,6 +541,7 @@ window.HERRAMIENTAS["planificador-semanal"] = {
     container.innerHTML = "";
     container.appendChild(wrap);
 
+    actualizarEncabezadoSemana();
     renderLista();
   }
 };
