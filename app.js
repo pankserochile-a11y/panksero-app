@@ -115,18 +115,39 @@ return (
 );
 }).join("");
 
+var ICONOS_HERRAMIENTA = {
+"calculadora-costos": "🧮",
+"calculadora-recetas": "⚖️",
+"planificador-semanal": "📅"
+};
+
 var herramientas = getHerramientas();
 var herramientasHtml = Object.keys(herramientas).map(function (hid) {
 var h = herramientas[hid];
+var icono = ICONOS_HERRAMIENTA[hid] || "🛠️";
 return (
-'<button class="module-card" data-route="herramienta/' + esc(hid) + '">' +
+'<button class="module-card tool-card" data-route="herramienta/' + esc(hid) + '">' +
+'<span class="tool-icon" aria-hidden="true">' + icono + '</span>' +
 '<span class="lock-tag lock-tag-pago">🔒 Pago</span>' +
 '<span class="module-num">' + esc(h.eyebrow || "Herramienta") + '</span>' +
 '<span class="module-title">' + esc(h.titulo) + "</span>" +
 '<span class="module-sub">' + esc(h.subtitulo || "") + "</span>" +
+'<span class="tool-chip">Interactiva ✨</span>' +
 "</button>"
 );
 }).join("") || '<p class="empty-state">Todavía no hay herramientas cargadas.</p>';
+
+var miniDemoHtml =
+'<div class="mini-demo">' +
+'<p class="mini-demo-eyebrow">Probá en vivo, sin código</p>' +
+'<p class="mini-demo-titulo">¿Cuánto margen te deja este producto?</p>' +
+'<div class="mini-demo-row">' +
+'<label>Costo unitario (CLP)<input type="number" id="miniCosto" inputmode="decimal" min="0" placeholder="Ej: 450"></label>' +
+'<label>Precio de venta (CLP)<input type="number" id="miniPrecio" inputmode="decimal" min="0" placeholder="Ej: 1200"></label>' +
+"</div>" +
+'<p class="mini-demo-resultado" id="miniResultado">Ingresá los dos valores para ver el margen y el food cost.</p>' +
+'<button class="mini-demo-cta" data-route="herramienta/calculadora-costos">Abrir calculadora completa →</button>' +
+"</div>";
 
 appEl.innerHTML =
 '<section class="hero">' +
@@ -142,6 +163,7 @@ appEl.innerHTML =
 '<div id="resultadosBuscador"></div>' +
 seccionCapitulosHtml +
 '<p class="section-label">Herramientas</p>' +
+miniDemoHtml +
 '<div class="shelf">' + herramientasHtml + "</div>" +
 bandaHorno +
 '<p class="section-label">En construcción</p>' +
@@ -157,6 +179,38 @@ var buscador = document.getElementById("buscador");
 buscador.addEventListener("input", function () {
 renderBusqueda(buscador.value.trim().toLowerCase());
 });
+
+attachMiniDemo();
+}
+
+// Mini calculadora de margen en el inicio: pura vidriera, sin guardar nada
+// y sin pedir acceso — el objetivo es que se sienta la herramienta real
+// (calculadora-costos) antes de decidir pagar por ella.
+function attachMiniDemo() {
+var costoInput = document.getElementById("miniCosto");
+var precioInput = document.getElementById("miniPrecio");
+var resultado = document.getElementById("miniResultado");
+if (!costoInput || !precioInput || !resultado) return;
+
+function actualizar() {
+var costo = parseFloat(costoInput.value);
+var precio = parseFloat(precioInput.value);
+if (!(costo >= 0) || !(precio > 0)) {
+resultado.className = "mini-demo-resultado";
+resultado.textContent = "Ingresá los dos valores para ver el margen y el food cost.";
+return;
+}
+var margen = ((precio - costo) / precio) * 100;
+var foodCost = 100 - margen;
+var estado = margen >= 55 ? "mini-demo-ok" : margen >= 35 ? "mini-demo-medio" : "mini-demo-bajo";
+resultado.className = "mini-demo-resultado " + estado;
+resultado.innerHTML =
+"Margen bruto: <strong>" + margen.toFixed(1) + "%</strong>" +
+" · Food cost: <strong>" + foodCost.toFixed(1) + "%</strong>";
+}
+
+costoInput.addEventListener("input", actualizar);
+precioInput.addEventListener("input", actualizar);
 }
 
 function renderBusqueda(term) {
