@@ -20,7 +20,7 @@ hasta que se migre.
   Hotmart y verifican códigos. La app les pega por `fetch`.
 - Gratis: Prólogo, Capítulo 1, Capítulo 16 (marcados `nivel: "gratis"`
   en su archivo `contenido-*.js`). Todo lo demás — capítulos 2 a 15 y
-  17, Bonos, y las herramientas — pide código.
+  17, Bonos, y las dos calculadoras — pide código.
 - MVP: un solo código desbloquea todo el contenido pago, sin
   diferenciar niveles de precio. Si más adelante hace falta separar
   por nivel, se agrega un campo `nivel` a cada capítulo (igual que
@@ -82,14 +82,6 @@ hasta que se migre.
   (usa una lista de `keywords` por problema).
 - `contenido-roadmap.js` — lista de los capítulos que faltan por migrar,
   para que se vean "próximamente" en el inicio.
-- `herramienta-planificador-semanal.js` — Bono 1 hecho herramienta real:
-  planificador semanal de producción por producto (producción, stock
-  congelado, enviado a frío positivo, programado, horneado, día por día).
-  Se guarda solo en `localStorage` del dispositivo, sin backend. Si un
-  producto se vincula a una receta del Capítulo 11 y tiene producción
-  cargada, calcula la proyección de ingredientes necesarios para la
-  semana. Incluye vista de impresión (`@media print` en `style.css`) para
-  imprimir solo la tabla consolidada.
 
 ## Cómo agregar el Capítulo 4, 5, 6... (o cualquier otro)
 

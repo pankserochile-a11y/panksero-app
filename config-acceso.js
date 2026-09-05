@@ -9,6 +9,6 @@
  * Ejemplo: "https://panksero-acceso.netlify.app"
  */
 window.CONFIG_ACCESO = {
-  FUNCTIONS_BASE_URL: "https://panksero-acceso.netlify.app",
+  FUNCTIONS_BASE_URL: "", // ← completar con la URL de Netlify una vez desplegado
   STORAGE_KEY: "panksero_acceso"
 };

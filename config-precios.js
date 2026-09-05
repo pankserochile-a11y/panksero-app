@@ -12,35 +12,40 @@ window.PRECIOS = {
     {
       id: "metodo",
       nombre: "El Método",
-      precio: 29990,
+      precio: 19990,
+      tipo: "Pago único",
+      destacado: false,
+      incluye: [
+        "Libro completo (17 capítulos + Prólogo)",
+        "Fichas técnicas de las familias de masa disponibles",
+        "Buscador de errores por síntoma"
+      ]
+    },
+    {
+      id: "sistema",
+      nombre: "Método + Sistema",
+      precio: 39990,
       tipo: "Pago único",
       destacado: true,
       incluye: [
-        "Libro completo (17 capítulos + Prólogo)",
-        "Fichas técnicas de las familias de masa",
-        "Buscador de errores por síntoma"
-      ],
-      cta: {
-        texto: "Comprar ahora →",
-        url: "PENDIENTE_LINK_HOTMART"
-      }
+        "Todo lo de El Método",
+        "Calculadora de costos (masa, empaste, margen)",
+        "Calculadora de recetas (escalado y porcentaje panadero)",
+        "Los 8 Bonos (plantillas y herramientas)",
+        "Plan de implementación de 7 días"
+      ]
     },
     {
-      id: "asesoria",
-      nombre: "Asesoría Guiada Online",
-      precio: 550000,
-      tipo: "Pago único",
-      duracion: "Acompañamiento personalizado de 7 días",
+      id: "implementacion",
+      nombre: "Implementación guiada",
+      precio: 150000,
+      tipo: "Desde",
       destacado: false,
       incluye: [
-        "Todo lo de El Método",
-        "Revisión de tu fórmula y tu cámara de frío conmigo",
-        "Acompañamiento directo por WhatsApp durante 7 días"
-      ],
-      cta: {
-        texto: "Coordinar por WhatsApp →",
-        url: "https://wa.me/56972930305?text=Hola%20Panka%2C%20quiero%20informaci%C3%B3n%20sobre%20la%20Asesor%C3%ADa%20Guiada%20Online%20de%207%20d%C3%ADas"
-      }
+        "Todo lo de Método + Sistema",
+        "Revisión de fórmula y cámara de frío conmigo",
+        "Acompañamiento por WhatsApp durante 7 días"
+      ]
     }
   ]
 };

@@ -1,0 +1,6 @@
+[build]
+  functions = "netlify/functions"
+  publish = "." # este proyecto solo existe para hospedar las funciones
+
+[functions]
+  node_bundler = "esbuild"

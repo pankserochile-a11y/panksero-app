@@ -10,10 +10,10 @@ window.CAPITULOS = window.CAPITULOS || {};
 
 window.CAPITULOS[0] = {
   numero: 0,
+  nivel: "gratis",
   eyebrow: "Prólogo",
   titulo: "Cómo llegamos hasta aquí",
   subtitulo: "El método no nació en un escritorio. Nació en la producción.",
-  nivel: "gratis",
   tipo: "articulo",
   estado: "disponible",
   intro: "Antes de hablar de congelación, frío positivo, fermentaciones programadas, producción por lotes, stock o planificación, hay que entender de dónde nació el Método Panksero.",
